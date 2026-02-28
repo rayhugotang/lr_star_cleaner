@@ -1,0 +1,14 @@
+# outputs
+*.csv
+out/
+output/
+delete_plan.csv
+rating_conflicts.csv
+
+# backups
+lightroom backups/
+*.bak
+
+# OS / editor
+.DS_Store
+Thumbs.db
