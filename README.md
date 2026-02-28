@@ -1,21 +1,115 @@
+# Lightroom 星级批量清理工具（lr_star_cleaner）
 
+根据 Lightroom 星级自动清理 JPG / RAW 文件。
 
-Lightroom 星级批量筛选删除脚本（优先边车 XMP + 可选 JPG 同步）
-规则：
-  1★：删除 JPG + RAW
-  2★：只保留 JPG，删除 RAW
-  3★：只保留 RAW，删除 JPG
-  4-5★：同时保留 JPG + RAW
-无评级：默认跳过（可用 --include-unrated 把无评级当 1★ 处理，危险）
+支持：
 
-关键策略：
-- 只要存在边车 .xmp（JPG 或 RAW 的），就只取边车里的 xmp:Rating，完全忽略文件内嵌 rating（哪怕是 0）。
-- 仅当不存在任意边车时，才回退去读文件内嵌 XMP。
-- 【新增】--sync-jpg-rating：当决定“保留 JPG”时，如果 JPG 内嵌 rating 为空/0 且存在同名 XMP 中有 1–5 星，
-  自动用 exiftool 把 XMP 的 rating（和 label）写入 JPG 内部。
+-   优先读取 sidecar XMP
+-   无 sidecar 时读取内嵌 XMP（安全分块读取）
+-   自动按目录分组（避免跨目录误删）
+-   冲突默认跳过（更安全）
+-   默认不允许永久删除
+-   可移动到回收目录
+-   可选同步 JPG 内嵌星级（需 exiftool）
 
-用法示例：
-  预演：
-    python lr_star_cleaner.py "E:\\Photos\\2025" --dry-run
-  真删（建议移动到回收目录）+ 同步 JPG 星级：
-    python lr_star_cleaner.py "E:\\Photos\\2025" --apply --trash-dir "E:\\Photos\\.TRASH" --sync-jpg-rating --exiftool "C:\Users\Administrator\Downloads\APP 软件\exiftool-13.36_64\exiftool.exe"
+------------------------------------------------------------------------
+
+## 清理规则
+
+  星级     JPG        RAW
+  -------- ---------- ------
+  1★       删除       删除
+  2★       保留       删除
+  3★       删除       保留
+  4★       保留       保留
+  5★       保留       保留
+  无评级   默认跳过   
+
+------------------------------------------------------------------------
+
+## ⚠️ 安全说明
+
+-   默认仅 dry-run，不会真正删除
+-   默认不允许永久删除
+-   建议先完整备份
+-   冲突分组默认跳过
+
+------------------------------------------------------------------------
+
+## 基本用法
+
+### 预演
+
+python lr_star_cleaner.py "E:`\Photos`{=tex}\\2025" --dry-run --out-dir
+".`\out`{=tex}"
+
+### 安全执行（移动到回收目录）
+
+python lr_star_cleaner.py "E:`\Photos`{=tex}\\2025" --apply --trash-dir
+"E:\_TRASH`\Photos2025`{=tex}" --out-dir ".`\out`{=tex}"
+
+### 永久删除（不推荐）
+
+python lr_star_cleaner.py "E:`\Photos`{=tex}\\2025" --apply
+--force-permanent-delete
+
+------------------------------------------------------------------------
+
+# English Version
+
+# Lightroom Rating Cleaner (lr_star_cleaner)
+
+Automatically clean JPG / RAW files based on Lightroom star ratings.
+
+Safety-first design.
+
+------------------------------------------------------------------------
+
+## Features
+
+-   Prioritizes sidecar XMP files
+-   Falls back to embedded XMP (chunk-safe reading)
+-   Groups by directory + filename
+-   Conflict groups skipped by default
+-   Permanent delete disabled by default
+-   Optional move-to-trash workflow
+-   Optional JPG rating sync (via ExifTool)
+
+------------------------------------------------------------------------
+
+## Rating Rules
+
+  Rating    JPG      RAW
+  --------- -------- --------
+  1★        Delete   Delete
+  2★        Keep     Delete
+  3★        Delete   Keep
+  4★        Keep     Keep
+  5★        Keep     Keep
+  Unrated   Skip     
+
+------------------------------------------------------------------------
+
+## Basic Usage
+
+### Dry Run
+
+python lr_star_cleaner.py "E:`\Photos`{=tex}\\2025" --dry-run --out-dir
+".`\out`{=tex}"
+
+### Safe Execution
+
+python lr_star_cleaner.py "E:`\Photos`{=tex}\\2025" --apply --trash-dir
+"E:\_TRASH`\Photos2025`{=tex}"
+
+### Permanent Delete (Not Recommended)
+
+python lr_star_cleaner.py "E:`\Photos`{=tex}\\2025" --apply
+--force-permanent-delete
+
+------------------------------------------------------------------------
+
+## Disclaimer
+
+This tool may cause data loss.\
+Use at your own risk.
