@@ -311,6 +311,11 @@ def main() -> None:
         sys.exit(1)
 
     out_dir = Path(args.out_dir)
+
+    # 如果是相对路径，则基于 root 目录
+    if not out_dir.is_absolute():
+        out_dir = root / out_dir
+
     out_dir.mkdir(parents=True, exist_ok=True)
 
     trash_dir_resolved = Path(args.trash_dir).resolve() if args.trash_dir else None
