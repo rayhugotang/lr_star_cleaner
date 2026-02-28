@@ -79,14 +79,14 @@ Safety-first design.
 
 ## Rating Rules
 
-  Rating    JPG      RAW
-  --------- -------- --------
-  1★        Delete   Delete
-  2★        Keep     Delete
-  3★        Delete   Keep
-  4★        Keep     Keep
-  5★        Keep     Keep
-  Unrated   Skip     
+| Rating | JPG | RAW |
+|------|-----|-----|
+| 1★   | DELETE | DELETE |
+| 2★   | KEEP | DELETE |
+| 3★   | DELETE | KEEP |
+| 4★   | KEEP | KEEP |
+| 5★   | KEEP | KEEP |
+| Unrated | Skip | - |
 
 ------------------------------------------------------------------------
 
